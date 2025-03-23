@@ -1,0 +1,19 @@
+<title>Login</title>
+{%extends 'base.html'%}
+{%block content%}
+
+{% for message in get_flashed_messages()%}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{%endfor%}
+
+<h1>Login-Page</h1>
+<form action="{{url_for('profile.login')}}" method="post">
+    <input name="email" placeholder="email" type="email" required><br>
+    <input name="password" placeholder="password" type="password" required>
+    <button type="submit">Login</button>
+</form>
+<a href="{{url_for('profile.sign_up')}}">create account</a>
+{%endblock%}

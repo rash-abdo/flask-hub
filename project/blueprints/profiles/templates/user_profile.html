@@ -1,0 +1,24 @@
+{%extends 'base.html'%}
+
+<title>User profile</title>
+{%block content%}
+
+{% for message in get_flashed_messages()%}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{%endfor%}
+
+<a  href="{{url_for('profile.logout')}}">Logout</a><br>
+<a  href="{{url_for('profile.delete')}}">delete profile</a>
+<h1>Profile information</h1>
+name: {{name}}<br>
+email: {{email}}<br>
+color: {{color}}<br>
+music: {{music}}<br>
+
+<a href="{{url_for('profile.edit')}}">edit</a><br>
+<a href="{{url_for('profile.change_password')}}">change password</a>
+
+{%endblock%}

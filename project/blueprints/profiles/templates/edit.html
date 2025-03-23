@@ -1,0 +1,13 @@
+{%extends 'base.html'%}
+
+<title>User profile</title>
+{%block content%}
+<form action="{{url_for('profile.edit')}}" method="post">
+<h1>Profile information</h1>
+    name: <input name="name" value="{{name}}" type="text" required><br>
+    email: <input name="email" value="{{email}}" type="email" required><br>
+    color: <input name="color" value="{{color}}" type="text"><br>
+    music: <input name="music" value="{{music}}" type="text"><br>
+    <button type="submit">submit edit</button>
+</form>
+{%endblock%}
