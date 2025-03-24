@@ -18,3 +18,12 @@ To use you have to:
 5-Run in terminal "flask --app run db migrate"
 
 6-Run in terminal "flask --app run db upgrade"
+
+# Run
+
+1-run the app from run.py
+
+2-ctrl+click on the appeared URL
+
+3-add "/profile/sign_up" in the website URL
+
