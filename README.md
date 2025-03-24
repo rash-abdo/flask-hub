@@ -15,6 +15,6 @@ To use you have to:
 
 4-Run in terminal "flask --app run db init"
 
-5-Run in terminal "flask --app run.py db migrate"
+5-Run in terminal "flask --app run db migrate"
 
-6-Run in terminal "flask --app run.py db upgrade"
+6-Run in terminal "flask --app run db upgrade"
