@@ -1,0 +1,9 @@
+{%extends "base.html" %}
+
+{% block content %}
+    <h1>My blogs</h1>
+    <form meathod="post" action="blogs.create_blog">
+        <textarea placeholder="What's on your mind?" rows="5" cols="50"></textarea><br>
+        <button type="submit">Post</button>
+    </form>
+{% endblock %}

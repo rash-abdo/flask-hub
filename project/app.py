@@ -19,6 +19,8 @@ def create_app():
     
     # Import Blueprints here
     from project.blueprints.profiles.routes import profile
+    from project.blueprints.blogs.routes import blogs
+    app.register_blueprint(blogs, url_prefix='/blogs')
     app.register_blueprint(profile, url_prefix='/profile')
 
 
