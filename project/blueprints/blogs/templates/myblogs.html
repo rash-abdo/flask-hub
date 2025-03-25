@@ -1,9 +1,12 @@
 {%extends "base.html" %}
 
 {% block content %}
-    <h1>My blogs</h1>
-    <form meathod="post" action="blogs.create_blog">
-        <textarea placeholder="What's on your mind?" rows="5" cols="50"></textarea><br>
+    <h1>Create a Blog</h1>
+    <form method="post" action="{{url_for('blogs.create_blog')}}">
+        <textarea name="title" placeholder="Title" rows="1" cols="50"></textarea><br>
+        <textarea name="blog" placeholder="What's on your mind?" rows="5" cols="50"></textarea><br>
         <button type="submit">Post</button>
     </form>
+    <hr size="10">
+    <h1>My Blogs</h1>
 {% endblock %}
