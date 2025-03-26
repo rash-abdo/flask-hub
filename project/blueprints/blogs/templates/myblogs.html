@@ -9,4 +9,10 @@
     </form>
     <hr size="10">
     <h1>My Blogs</h1>
+    {%for blog in range(number_blogs)%}
+        <h3>{{titles[blog]}}</h3>{{dates[blog]}}<hr>
+        <P>{{blogs[blog]}}</P>
+        <hr size="10">
+
+    {%endfor%}
 {% endblock %}
