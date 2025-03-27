@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-3 text-center">Edit Blog</h2>
+        
+        <form method="post" action="{{ url_for('blogs.edit_blog', blog_id=blog_id) }}">
+            <input type="hidden" name="blog_id" value="{{ blog_id }}">
+
+            <!-- Title Input -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ title }}" required>
+            </div>
+
+            <!-- Blog Content Input -->
+            <div class="mb-3">
+                <label for="blog" class="form-label">Content:</label>
+                <textarea class="form-control" id="blog" name="blog" rows="6" required>{{ content }}</textarea>
+            </div>
+
+            <!-- Save Changes Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Save Changes</button>
+                <a href="{{ url_for('blogs.myblogs') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

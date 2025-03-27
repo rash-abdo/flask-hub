@@ -1,18 +1,62 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-    <h1>Create a Blog</h1>
-    <form method="post" action="{{url_for('blogs.create_blog')}}">
-        <textarea name="title" placeholder="Title" rows="1" cols="50"></textarea><br>
-        <textarea name="blog" placeholder="What's on your mind?" rows="5" cols="50"></textarea><br>
-        <button type="submit">Post</button>
-    </form>
-    <hr size="10">
-    <h1>My Blogs</h1>
-    {%for blog in range(number_blogs)%}
-        <h3>{{titles[blog]}}</h3>{{dates[blog]}}<hr>
-        <P>{{blogs[blog]}}</P>
-        <hr size="10">
+<div class="container mt-4">
+    
+    <!-- Flash Messages -->
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 
-    {%endfor%}
+    <!-- Create Blog Section -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h2 class="mb-3">Create a Blog</h2>
+        <form method="post" action="{{ url_for('blogs.myblogs') }}">
+            <input type="hidden" value="create" name="action">
+            
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter your blog title">
+            </div>
+            
+            <div class="mb-3">
+                <label for="blog" class="form-label">Content</label>
+                <textarea class="form-control" id="blog" name="blog" rows="5" placeholder="What's on your mind?"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+    </div>
+
+    <!-- Blog List Section -->
+    <h2 class="mb-3">My Blogs</h2>
+
+    {% for blog in range(number_blogs) %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4 class="card-title">{{ titles[blog] }}</h4>
+                <h6 class="text-muted">{{ dates[blog] }}</h6>
+                <p class="card-text">{{ blogs[blog] }}</p>
+                
+                <div class="d-flex justify-content-end">
+                    <!-- Delete Button -->
+                    <form method="post" action="{{ url_for('blogs.myblogs') }}" class="me-2">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="blog_id" value="{{ blog_ids[blog] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+
+                    <!-- Edit Button -->
+                    <a href="{{ url_for('blogs.edit_blog', blog_id=blog_ids[blog]) }}" class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
 {% endblock %}
