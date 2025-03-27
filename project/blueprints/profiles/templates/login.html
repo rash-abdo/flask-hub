@@ -1,19 +1,23 @@
-<title>Login</title>
-{%extends 'base.html'%}
-{%block content%}
+{% extends 'base.html' %}
 
-{% for message in get_flashed_messages()%}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>{{message}}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-{%endfor%}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Login</h2>
 
-<h1>Login-Page</h1>
-<form action="{{url_for('profile.login')}}" method="post">
-    <input name="email" placeholder="email" type="email" required><br>
-    <input name="password" placeholder="password" type="password" required>
-    <button type="submit">Login</button>
-</form>
-<a href="{{url_for('profile.sign_up')}}">create account</a>
-{%endblock%}
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning text-center">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <form action="{{ url_for('profile.login') }}" method="post" class="mx-auto" style="max-width: 300px;">
+        <input name="email" type="email" class="form-control mb-2" placeholder="Email" required>
+        <input name="password" type="password" class="form-control mb-2" placeholder="Password" required>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+
+    <p class="text-center mt-3">
+        Don't have an account? <a href="{{ url_for('profile.sign_up') }}">Sign up</a>
+    </p>
+</div>
+{% endblock %}

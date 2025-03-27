@@ -1,24 +1,36 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 
-<title>User profile</title>
-{%block content%}
+{% block content %}
+<div class="container mt-4">
+    <!-- Flash Messages -->
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 
-{% for message in get_flashed_messages()%}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>{{message}}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 500px; border-radius: 10px;">
+        <h2 class="text-center mb-3">User Profile</h2>
+
+        <div class="mb-3">
+            <strong>Name:</strong> {{ name }}<br>
+            <strong>Email:</strong> {{ email }}<br>
+            <strong>Favorite Color:</strong> {{ color }}<br>
+            <strong>Favorite Music:</strong> {{ music }}<br>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('profile.edit') }}" class="btn btn-outline-primary w-45">Edit Profile</a>
+            <a href="{{ url_for('profile.change_password') }}" class="btn btn-outline-warning w-45">Change Password</a>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('profile.logout') }}" class="btn btn-danger w-45">Logout</a>
+            <a href="{{ url_for('profile.delete') }}" class="btn btn-dark w-45">Delete Account</a>
+        </div>
     </div>
-{%endfor%}
-
-<a  href="{{url_for('profile.logout')}}">Logout</a><br>
-<a  href="{{url_for('profile.delete')}}">delete profile</a>
-<h1>Profile information</h1>
-name: {{name}}<br>
-email: {{email}}<br>
-color: {{color}}<br>
-music: {{music}}<br>
-
-<a href="{{url_for('profile.edit')}}">edit</a><br>
-<a href="{{url_for('profile.change_password')}}">change password</a>
-
-{%endblock%}
+</div>
+{% endblock %}

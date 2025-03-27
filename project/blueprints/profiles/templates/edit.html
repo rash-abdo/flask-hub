@@ -1,13 +1,33 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 
-<title>User profile</title>
-{%block content%}
-<form action="{{url_for('profile.edit')}}" method="post">
-<h1>Profile information</h1>
-    name: <input name="name" value="{{name}}" type="text" required><br>
-    email: <input name="email" value="{{email}}" type="email" required><br>
-    color: <input name="color" value="{{color}}" type="text"><br>
-    music: <input name="music" value="{{music}}" type="text"><br>
-    <button type="submit">submit edit</button>
-</form>
-{%endblock%}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 500px; border-radius: 10px;">
+        <h2 class="text-center mb-3">Edit Profile</h2>
+
+        <form action="{{ url_for('profile.edit') }}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input name="name" value="{{ name }}" type="text" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input name="email" value="{{ email }}" type="email" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Favorite Color</label>
+                <input name="color" value="{{ color }}" type="text" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Favorite Music</label>
+                <input name="music" value="{{ music }}" type="text" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
