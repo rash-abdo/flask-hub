@@ -2,11 +2,10 @@ from project.app import db,bcrypt
 from flask import (redirect,render_template,
                    request,session,flash,url_for)
 from project.blueprints.profiles.models import Users,Info
+import os
+import shutil
 
-#view home page
-def index():
-    if request.method == 'GET':
-        return render_template('home.html')
+
 
 
 #view user profile function
@@ -36,8 +35,9 @@ def logout():
 #delete profile function
 def delete():
     user = Users.query.get(session['uid'])
-    info = Info.query.filter_by(user_id=session['uid']).first()
-    db.session.delete(info)
+    blog_path = 'project/uploads/blogs/Uid_'+str(session['uid'])
+    if os.path.exists(blog_path):
+        shutil.rmtree(blog_path)
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for('profile.logout'))
@@ -54,7 +54,7 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password,password):
                 session['uid'] = user.id               
-                return redirect(url_for('profile.index'))
+                return redirect(url_for('blogs.home'))
             else:
                 flash('incorrect password')
                 return render_template('login.html')
@@ -95,7 +95,7 @@ def sign_up():
             db.session.add(info)
             db.session.commit()
             session['uid'] = user.id
-            return redirect(url_for('profile.index'))
+            return redirect(url_for('blogs.home'))
         
 
 #edit profile information function
