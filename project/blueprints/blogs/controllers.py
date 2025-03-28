@@ -2,6 +2,7 @@ from flask import (render_template,request,
                    redirect,url_for,flash,session)
 from project.app import db
 from project.blueprints.blogs.models import Blogs
+from project.blueprints.profiles.models import Users
 import os
 import datetime
 import uuid
@@ -81,10 +82,39 @@ def edit_blog():
         return redirect(url_for('blogs.myblogs'))
 
 def myblogs():
-    action = request.form.get('action')
+    try:
+        action = request.form.get('action')
+        if request.method == 'GET':
+            return view_myblogs()
+        if request.method == 'POST' and action == 'create':
+            return create_blog()
+        if request.method == 'POST' and action == 'delete':
+            return delete_blog()
+    except KeyError:
+        return redirect(url_for('profile.logout'))
+    
+#view home page
+def home():
     if request.method == 'GET':
-        return view_myblogs()
-    if request.method == 'POST' and action == 'create':
-        return create_blog()
-    if request.method == 'POST' and action == 'delete':
-        return delete_blog()
+        blogs_list=Blogs.query.all()
+        number_blogs = len(blogs_list)
+        accending = sorted(blogs_list,key=lambda x: x.date,reverse=True)
+        paths=[]
+        dates=[]
+        titles=[]
+        users_id=[]
+        for blog in accending:
+            users_id.append(blog.user_id)
+            paths.append(blog.path)
+            dates.append(blog.date)
+            titles.append(blog.title)
+        users_name=[]
+        for user in users_id:
+            users_name.append(Users.query.get(user).name)
+        blogs=[]
+        for path in paths:
+            with open(path,'r') as f:
+                blogs.append(f.read())
+        return render_template('home.html',paths=paths,dates=dates,blogs=blogs,
+                               titles=titles,number_blogs=number_blogs,
+                               users_id=users_id,users_name=users_name)

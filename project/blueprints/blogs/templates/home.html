@@ -1,0 +1,19 @@
+<title>Home</title>
+{%extends 'base.html'%}
+{%block content%}
+<h1>Home</h1>
+<div class="container mt-4">
+    <!-- Blog List Section -->
+    {% for blog in range(number_blogs) %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <a href="#">{{ users_name[blog] }}</a>
+                <h4 class="card-title">{{ titles[blog] }}</h4>
+                <h6 class="text-muted">{{ dates[blog] }}</h6>
+                <p class="card-text">{{ blogs[blog] }}</p>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+{%endblock%}
