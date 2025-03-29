@@ -14,8 +14,7 @@
     <!-- Create Blog Section -->
     <div class="card shadow-sm p-4 mb-4">
         <h2 class="mb-3">Create a Blog</h2>
-        <form method="post" action="{{ url_for('blogs.myblogs') }}">
-            <input type="hidden" value="create" name="action">
+        <form method="post" action="{{ url_for('blogs.create_blog') }}">
             
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -43,8 +42,7 @@
                 
                 <div class="d-flex justify-content-end">
                     <!-- Delete Button -->
-                    <form method="post" action="{{ url_for('blogs.myblogs') }}" class="me-2">
-                        <input type="hidden" name="action" value="delete">
+                    <form method="post" action="{{ url_for('blogs.delete_blog') }}" class="me-2">
                         <input type="hidden" name="blog_id" value="{{ blog_ids[blog] }}">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
