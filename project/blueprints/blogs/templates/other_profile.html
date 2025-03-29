@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Profile Info -->
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">{{ name }}</h1>
+        <p class="text-muted">{{ email }}</p>
+        <span class="badge bg-primary">Favorite Color: {{ color }}</span>
+        <span class="badge bg-secondary">Music: {{ music }}</span>
+    </div>
+    
+    <hr class="my-4">
+    
+    <!-- Blog List Section -->
+    <h2 class="mb-3">Blogs</h2>
+    
+    {% for blog in range(number_blogs) %}
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-body">
+                <h4 class="card-title text-primary">{{ titles[blog] }}</h4>
+                <h6 class="text-muted">{{ dates[blog] }}</h6>
+                <p class="card-text">{{ blogs[blog] }}</p>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">No blogs available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -7,7 +7,7 @@
     {% for blog in range(number_blogs) %}
         <div class="card shadow-sm mb-3">
             <div class="card-body">
-                <a href="#">{{ users_name[blog] }}</a>
+                <a href="{{url_for('blogs.other_profile',users_id=users_id[blog])}}">{{ users_name[blog] }}</a>
                 <h4 class="card-title">{{ titles[blog] }}</h4>
                 <h6 class="text-muted">{{ dates[blog] }}</h6>
                 <p class="card-text">{{ blogs[blog] }}</p>
