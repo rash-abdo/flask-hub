@@ -36,19 +36,19 @@
     {% for blog in range(number_blogs) %}
         <div class="card shadow-sm mb-3">
             <div class="card-body">
-                <h4 class="card-title">{{ titles[blog] }}</h4>
-                <h6 class="text-muted">{{ dates[blog] }}</h6>
+                <h4 class="card-title">{{ blogs_list[blog].title }}</h4>
+                <h6 class="text-muted">{{ blogs_list[blog].date }}</h6>
                 <p class="card-text">{{ blogs[blog] }}</p>
                 
                 <div class="d-flex justify-content-end">
                     <!-- Delete Button -->
-                    <form method="post" action="{{ url_for('blogs.delete_blog') }}" class="me-2">
-                        <input type="hidden" name="blog_id" value="{{ blog_ids[blog] }}">
+                    <form method="post" action="{{ url_for('blogs.delete_blog', blog_id=blogs_list[blog].id) }}" class="me-2">
+                        <input type="hidden" name="blog_id" value="{{ blogs_list[blog].id }}">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
 
                     <!-- Edit Button -->
-                    <a href="{{ url_for('blogs.edit_blog', blog_id=blog_ids[blog]) }}" class="btn btn-warning btn-sm">
+                    <a href="{{ url_for('blogs.edit_blog', blog_id=blogs_list[blog].id) }}" class="btn btn-warning btn-sm">
                         Edit
                     </a>
                 </div>
