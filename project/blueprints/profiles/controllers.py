@@ -11,19 +11,22 @@ import shutil
 #view user profile function
 def user_profile():
     if request.method == 'GET':
-        try:
-            user = Users.query.get(session['uid'])
-            info = Info.query.filter_by(user_id=session['uid']).first()
-                        
-            name = user.name
-            email = user.email
-            color = info.color
-            music = info.music
-            
-            return render_template('user_profile.html',name=name,
-                        email=email,color=color,music=music)
-        except KeyError:
+        user_id=session.get('uid')
+        if not user_id:
+            flash("Session expired. Please log in again.", "warning")
             return redirect(url_for('profile.logout'))
+        
+        user = Users.query.get(user_id)
+        info = Info.query.filter_by(user_id=session['uid']).first()
+                    
+        name = user.name
+        email = user.email
+        color = info.color
+        music = info.music
+        
+        return render_template('user_profile.html',name=name,
+                    email=email,color=color,music=music)
+
         
 
 #logout function
@@ -67,7 +70,7 @@ def login():
 def sign_up():
     if request.method == 'GET':
         return render_template('sign.html')
-    elif request.method == 'POST':
+    if request.method == 'POST':
         user = Users()
         email = Users.query.filter_by(email=request.form.get('email')).first()
         hashed_password = bcrypt.generate_password_hash(request.form.get('password'))        
@@ -135,7 +138,6 @@ def edit():
 #change password function        
 def change_password():
     if request.method == 'GET':
-        print('asdasd')
         return render_template('change_password.html')
     if request.method == 'POST':
         old_password = request.form.get('old_password')

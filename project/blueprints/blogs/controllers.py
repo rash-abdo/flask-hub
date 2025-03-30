@@ -7,22 +7,26 @@ import os
 import datetime
 import uuid
 
+
+
 #view my blogs
 def view_myblogs():
-    try:
-        blogs_list = Blogs.query.filter_by(user_id=session['uid']).all()
-        number_blogs = len(blogs_list)
-        blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
-
-        blogs=[]
-        for blog in blogs_list:
-            with open(blog.path,'r') as f:
-                blogs.append(f.read())
-                
-        return render_template('myblogs.html',blogs_list=blogs_list,
-                               blogs=blogs,number_blogs=number_blogs)
-    except KeyError:
+    user_id=session.get('uid')
+    if not user_id:
+        flash("Session expired. Please log in again.", "warning")
         return redirect(url_for('profile.logout'))
+    
+    blogs_list = Blogs.query.filter_by(user_id=user_id).all()
+    number_blogs = len(blogs_list)
+    blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
+
+    blogs=[]
+    for blog in blogs_list:
+        with open(blog.path,'r') as f:
+            blogs.append(f.read())
+            
+    return render_template('myblogs.html',blogs_list=blogs_list,
+                           blogs=blogs,number_blogs=number_blogs)
 
 #create blog
 def create_blog():
@@ -32,7 +36,7 @@ def create_blog():
     path = f'project/uploads/blogs/Uid_{session["uid"]}'
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     file_name = uuid.uuid4().hex[:15]
-    file = f'{path}/{file_name}.txt'
+    file = os.path.join(path,f'{file_name}.txt')
 
     if not os.path.exists(path):
         os.makedirs(path)
@@ -52,6 +56,7 @@ def delete_blog(blog_id):
     os.remove(blog.path)
     db.session.delete(blog)
     db.session.commit()
+
     return redirect(url_for('blogs.view_myblogs'))
 
 #edit blog
@@ -61,6 +66,7 @@ def edit_blog(blog_id):
         title=blog.title
         with open(blog.path,'r') as f:
             content=f.read()
+        
         return render_template('edit_blog.html',title=title,
                                content=content,blog_id=blog_id)
     if request.method=='POST':
@@ -86,10 +92,12 @@ def home():
         users_name=[]
         for blog in blogs_list:
             users_name.append(Users.query.get(blog.user_id).name)
+        
         blogs=[]
         for blog in blogs_list:
             with open(blog.path,'r') as f:
                 blogs.append(f.read())
+        
         return render_template('home.html',blogs_list=blogs_list,
                                blogs=blogs,number_blogs=number_blogs,
                                users_name=users_name)
@@ -107,6 +115,7 @@ def other_profile(users_id):
     blogs_list = Blogs.query.filter_by(user_id=users_id).all()
     number_blogs = len(blogs_list)
     blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
+    
     blogs=[]
     for blog in blogs_list:
         with open(blog.path,'r') as f:
