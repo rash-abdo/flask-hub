@@ -7,32 +7,24 @@ import os
 import datetime
 import uuid
 
-
+#view my blogs
 def view_myblogs():
     try:
         blogs_list = Blogs.query.filter_by(user_id=session['uid']).all()
         number_blogs = len(blogs_list)
-        accending = sorted(blogs_list,key=lambda x: x.date,reverse=True)
-        paths=[]
-        dates=[]
-        titles=[]
-        blog_ids=[]
-        for blog in accending:
-            blog_ids.append(blog.id)
-            paths.append(blog.path)
-            dates.append(blog.date)
-            titles.append(blog.title)
+        blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
+
         blogs=[]
-        for path in paths:
-            with open(path,'r') as f:
+        for blog in blogs_list:
+            with open(blog.path,'r') as f:
                 blogs.append(f.read())
                 
-        return render_template('myblogs.html',blogs=blogs,
-                            number_blogs=number_blogs,dates=dates,
-                            titles=titles,blog_ids=blog_ids)
+        return render_template('myblogs.html',blogs_list=blogs_list,
+                               blogs=blogs,number_blogs=number_blogs)
     except KeyError:
         return redirect(url_for('profile.logout'))
-    
+
+#create blog
 def create_blog():
     
     title = request.form.get('title')
@@ -54,17 +46,17 @@ def create_blog():
     
     return redirect(url_for('blogs.view_myblogs'))
 
-def delete_blog():
-    blog_id=int(request.form.get('blog_id'))
+#delete blog
+def delete_blog(blog_id):
     blog = Blogs.query.get(blog_id)
     os.remove(blog.path)
     db.session.delete(blog)
     db.session.commit()
     return redirect(url_for('blogs.view_myblogs'))
 
-def edit_blog():
+#edit blog
+def edit_blog(blog_id):
     if request.method=='GET':
-        blog_id=int(request.args.get('blog_id'))
         blog = Blogs.query.get(blog_id)
         title=blog.title
         with open(blog.path,'r') as f:
@@ -89,27 +81,20 @@ def home():
     if request.method == 'GET':
         blogs_list=Blogs.query.all()
         number_blogs = len(blogs_list)
-        accending = sorted(blogs_list,key=lambda x: x.date,reverse=True)
-        paths=[]
-        dates=[]
-        titles=[]
-        users_id=[]
-        for blog in accending:
-            users_id.append(blog.user_id)
-            paths.append(blog.path)
-            dates.append(blog.date)
-            titles.append(blog.title)
+        blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
+
         users_name=[]
-        for user in users_id:
-            users_name.append(Users.query.get(user).name)
+        for blog in blogs_list:
+            users_name.append(Users.query.get(blog.user_id).name)
         blogs=[]
-        for path in paths:
-            with open(path,'r') as f:
+        for blog in blogs_list:
+            with open(blog.path,'r') as f:
                 blogs.append(f.read())
-        return render_template('home.html',paths=paths,dates=dates,blogs=blogs,
-                               titles=titles,number_blogs=number_blogs,
-                               users_id=users_id,users_name=users_name)
-    
+        return render_template('home.html',blogs_list=blogs_list,
+                               blogs=blogs,number_blogs=number_blogs,
+                               users_name=users_name)
+
+#view other profiles
 def other_profile(users_id):
     user = Users.query.get(users_id)
     info = Info.query.filter_by(user_id=users_id).first()
@@ -121,22 +106,13 @@ def other_profile(users_id):
 
     blogs_list = Blogs.query.filter_by(user_id=users_id).all()
     number_blogs = len(blogs_list)
-    accending = sorted(blogs_list,key=lambda x: x.date,reverse=True)
-    paths=[]
-    dates=[]
-    titles=[]
-    blog_ids=[]
-    for blog in accending:
-        blog_ids.append(blog.id)
-        paths.append(blog.path)
-        dates.append(blog.date)
-        titles.append(blog.title)
+    blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
     blogs=[]
-    for path in paths:
-        with open(path,'r') as f:
+    for blog in blogs_list:
+        with open(blog.path,'r') as f:
             blogs.append(f.read())
 
-    return render_template('other_profile.html',blogs=blogs,number_blogs=number_blogs,dates=dates,
-                        titles=titles,blog_ids=blog_ids,
+    return render_template('other_profile.html',blogs_list=blogs_list,
+                           blogs=blogs,number_blogs=number_blogs,
                         email=email,name=name,color=color,music=music)
 

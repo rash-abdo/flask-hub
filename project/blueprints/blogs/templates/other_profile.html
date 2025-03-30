@@ -18,8 +18,8 @@
     {% for blog in range(number_blogs) %}
         <div class="card shadow-sm mb-4 border-0">
             <div class="card-body">
-                <h4 class="card-title text-primary">{{ titles[blog] }}</h4>
-                <h6 class="text-muted">{{ dates[blog] }}</h6>
+                <h4 class="card-title text-primary">{{ blogs_list[blog].title }}</h4>
+                <h6 class="text-muted">{{ blogs_list[blog].date }}</h6>
                 <p class="card-text">{{ blogs[blog] }}</p>
             </div>
         </div>
