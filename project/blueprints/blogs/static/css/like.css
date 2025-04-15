@@ -1,0 +1,30 @@
+.toggle-container {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-btn {
+  padding: 10px 20px;
+  border: 2px solid #ccc;
+  background-color: white;
+  color: #444;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-btn.active.like {
+  background-color: #4CAF50; /* green */
+  color: white;
+  border-color: #4CAF50;
+}
+
+.toggle-btn.active.dislike {
+  background-color: #F44336; /* red */
+  color: white;
+  border-color: #F44336;
+}
