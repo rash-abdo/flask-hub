@@ -1,11 +1,12 @@
 from flask import (render_template,request,
                    redirect,url_for,flash,session)
 from project.app import db
-from project.blueprints.blogs.models import Blogs
+from project.blueprints.blogs.models import Blogs,Likes
 from project.blueprints.profiles.models import Users,Info
 import os
 import datetime
 import uuid
+import csv
 
 
 
@@ -86,6 +87,8 @@ def edit_blog(blog_id):
 def home():
     if request.method == 'GET':
         user_id=session.get('uid')
+        if user_id:
+            likes = Likes.query.filter_by(user_id=user_id).all()
         blogs_list=Blogs.query.all()
         number_blogs = len(blogs_list)
         blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
@@ -101,20 +104,58 @@ def home():
         
         return render_template('home.html',blogs_list=blogs_list,
                                blogs=blogs,number_blogs=number_blogs,
-                               users_name=users_name)
+                               users_name=users_name,likes=likes)
     
 #like function
 def like(blog_id):
-    blog = Blogs.query.get(blog_id)
-    blog.like+=1
-    db.session.commit()
-    return redirect(url_for('blogs.home'))
+    if request.method == 'POST':
+        user_id = session.get('uid')
+        if user_id:
+            like = Likes.query.filter_by(blog_id=blog_id,user_id=user_id).first()
+            blog = Blogs.query.get(blog_id)
+            if not like:
+                like = Likes(blog_id=blog_id, user_id=user_id, likes=1)
+                blog.like+=1
+                db.session.add(like)
+                db.session.commit()
+            else:
+                if like.likes:
+                    blog.like-=1
+                    db.session.delete(like)
+                    db.session.commit()
+                else:
+                    blog.like+=1
+                    blog.dislike+=1
+                    like.likes = 1
+                    db.session.commit()
+            return redirect(url_for('blogs.home'))
+        else:
+            return redirect(url_for('profile.logout'))
 #dislike function
 def dislike(blog_id):
-    blog = Blogs.query.get(blog_id)
-    blog.dislike-=1
-    db.session.commit()
-    return redirect(url_for('blogs.home'))
+    if request.method == 'POST':
+        user_id = session.get('uid')
+        if user_id:
+            like = Likes.query.filter_by(blog_id=blog_id,user_id=user_id).first()
+            blog = Blogs.query.get(blog_id)
+            if not like:
+                like = Likes(blog_id=blog_id, user_id=user_id, likes=0)
+                blog.dislike-=1
+                db.session.add(like)
+                db.session.commit()
+            else:
+                if like.likes:
+                    blog.like-=1
+                    blog.dislike-=1
+                    like.likes = 0
+                    db.session.commit()
+                else:
+                    blog.dislike+=1
+                    db.session.delete(like)
+                    db.session.commit()
+            return redirect(url_for('blogs.home'))
+        else:
+            return redirect(url_for('profile.logout'))
 
 #view other profiles
 def other_profile(users_id):
