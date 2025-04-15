@@ -6,7 +6,7 @@ from flask import Blueprint
 
 blogs = Blueprint('blogs',__name__,template_folder='templates', static_folder='static',static_url_path='/')
 
-blogs.add_url_rule('/home', 'home', home, methods=['GET'])
+blogs.add_url_rule('/', 'home', home, methods=['GET'])
 blogs.add_url_rule('/myblogs','view_myblogs',view_myblogs,methods=['GET','POST'])
 blogs.add_url_rule('/delete blog/<blog_id>','delete_blog',delete_blog,methods=['GET','POST'])
 blogs.add_url_rule('/create blog','create_blog',create_blog,methods=['GET','POST'])

@@ -16,22 +16,37 @@
                 <h6 class="text-muted">{{ blogs_list[blog].date }}</h6>
                 <p class="card-text">{{ blogs[blog] }}</p>
 
+                {% set like_activate = '' %}
+                {% set dislike_activate = '' %}
+                {% set done = false %}
+                
+                {% for blg in likes %}
+                    {% if not done and blogs_list[blog].id == blg.blog_id %}
+                        {% if blg.like == 1 %}
+                            {% set like_activate = 'activate' %}
+                            {% set done = true %}
+                        {% elif blg.like == 0 %}
+                            {% set dislike_activate = 'activate' %}
+                            {% set done = true %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
                 <div class="toggle-container">
-                    <form action="{{url_for('blogs.like', blog_id=blogs_list[blog].id)}}">
-                        <button id="likeBtn" class="toggle-btn like">
+                    <form method="post" action="{{url_for('blogs.like', blog_id=blogs_list[blog].id)}}">
+                        <button id="likeBtn" class="toggle-btn like {{like_activate}}">
                         👍</button>
-                        {{blogs_list[blog].like}}
+                        {{blogs_list[blog].like}} 
                     </form>
-                    
-                    <form action="{{url_for('blogs.dislike', blog_id=blogs_list[blog].id)}}">
-                        <button id="dislikeBtn" class="toggle-btn dislike">
+
+                    <form method="post" action="{{url_for('blogs.dislike', blog_id=blogs_list[blog].id)}}">
+                        <button id="dislikeBtn" class="toggle-btn dislike {{dislike_activate}}">
                         👎</button>
-                        {{blogs_list[blog].dislike}}
+                        {{blogs_list[blog].dislike}} 
                     </form>
                 </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
-    <script src="/js/like.js"></script> 
+    {% endfor %}
+</div>
+<script src="/js/like.js"></script> 
 {% endblock %}

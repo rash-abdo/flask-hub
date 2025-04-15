@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="/css/like.css">
+{% endblock %}
+
 {% block content %}
 <div class="container py-4">
     <!-- Profile Info -->
@@ -21,10 +25,24 @@
                 <h4 class="card-title text-primary">{{ blogs_list[blog].title }}</h4>
                 <h6 class="text-muted">{{ blogs_list[blog].date }}</h6>
                 <p class="card-text">{{ blogs[blog] }}</p>
+                <div class="toggle-container">
+                    <form method="post" action="{{url_for('blogs.like', blog_id=blogs_list[blog].id)}}">
+                        <button id="likeBtn" class="toggle-btn like">
+                        👍</button>
+                        {{blogs_list[blog].like}}
+                    </form>
+
+                    <form method="post" action="{{url_for('blogs.dislike', blog_id=blogs_list[blog].id)}}">
+                        <button id="dislikeBtn" class="toggle-btn dislike">
+                        👎</button>
+                        {{blogs_list[blog].dislike}}
+                    </form>
+                </div>
             </div>
         </div>
     {% else %}
         <p class="text-muted">No blogs available.</p>
     {% endfor %}
 </div>
+<script src="/js/like.js"></script> 
 {% endblock %}
