@@ -1,19 +1,37 @@
 <title>Home</title>
 {%extends 'base.html'%}
-{%block content%}
+
+{% block head %}
+<link rel="stylesheet" href="/css/like.css">
+{% endblock %}
+
+{% block content %}
 <h1>Home</h1>
 <div class="container mt-4">
-    <!-- Blog List Section -->
     {% for blog in range(number_blogs) %}
         <div class="card shadow-sm mb-3">
             <div class="card-body">
-                <a href="{{url_for('blogs.other_profile',users_id=blogs_list[blog].user_id)}}">{{ users_name[blog] }}</a>
+                <a href="{{ url_for('blogs.other_profile', users_id=blogs_list[blog].user_id) }}">{{ users_name[blog] }}</a>
                 <h4 class="card-title">{{ blogs_list[blog].title }}</h4>
                 <h6 class="text-muted">{{ blogs_list[blog].date }}</h6>
                 <p class="card-text">{{ blogs[blog] }}</p>
+
+                <div class="toggle-container">
+                    <form action="{{url_for('blogs.like', blog_id=blogs_list[blog].id)}}">
+                        <button id="likeBtn" class="toggle-btn like">
+                        👍</button>
+                        {{blogs_list[blog].like}}
+                    </form>
+                    
+                    <form action="{{url_for('blogs.dislike', blog_id=blogs_list[blog].id)}}">
+                        <button id="dislikeBtn" class="toggle-btn dislike">
+                        👎</button>
+                        {{blogs_list[blog].dislike}}
+                    </form>
+                </div>
             </div>
         </div>
-    {% endfor %}
-
-</div>
-{%endblock%}
+        {% endfor %}
+    </div>
+    <script src="/js/like.js"></script> 
+{% endblock %}

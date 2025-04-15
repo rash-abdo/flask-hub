@@ -85,6 +85,7 @@ def edit_blog(blog_id):
 #view home page
 def home():
     if request.method == 'GET':
+        user_id=session.get('uid')
         blogs_list=Blogs.query.all()
         number_blogs = len(blogs_list)
         blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
@@ -101,6 +102,19 @@ def home():
         return render_template('home.html',blogs_list=blogs_list,
                                blogs=blogs,number_blogs=number_blogs,
                                users_name=users_name)
+    
+#like function
+def like(blog_id):
+    blog = Blogs.query.get(blog_id)
+    blog.like+=1
+    db.session.commit()
+    return redirect(url_for('blogs.home'))
+#dislike function
+def dislike(blog_id):
+    blog = Blogs.query.get(blog_id)
+    blog.dislike-=1
+    db.session.commit()
+    return redirect(url_for('blogs.home'))
 
 #view other profiles
 def other_profile(users_id):

@@ -7,3 +7,5 @@ class Blogs(db.Model):
     path = db.Column(db.String(300),nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"))
     title = db.Column(db.String(100),nullable=False)
+    like = db.Column(db.Integer)
+    dislike = db.Column(db.Integer)
