@@ -17,13 +17,13 @@
   gap: 8px;
 }
 
-.toggle-btn.active.like {
+.toggle-btn.like.activate {
   background-color: #4CAF50; /* green */
   color: white;
   border-color: #4CAF50;
 }
 
-.toggle-btn.active.dislike {
+.toggle-btn.dislike.activate {
   background-color: #F44336; /* red */
   color: white;
   border-color: #F44336;

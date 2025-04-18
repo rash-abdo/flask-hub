@@ -1,52 +1,54 @@
-<title>Home</title>
-{%extends 'base.html'%}
-
+{% extends 'base.html' %}
 {% block head %}
-<link rel="stylesheet" href="/css/like.css">
+  <link rel="stylesheet" href="/css/like.css">
 {% endblock %}
 
 {% block content %}
 <h1>Home</h1>
 <div class="container mt-4">
-    {% for blog in range(number_blogs) %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-body">
-                <a href="{{ url_for('blogs.other_profile', users_id=blogs_list[blog].user_id) }}">{{ users_name[blog] }}</a>
-                <h4 class="card-title">{{ blogs_list[blog].title }}</h4>
-                <h6 class="text-muted">{{ blogs_list[blog].date }}</h6>
-                <p class="card-text">{{ blogs[blog] }}</p>
+  {% for blog in blogs_list %}
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <input type="hidden" class="blog-id" value="{{ blog.id }}">
 
-                {% set like_activate = '' %}
-                {% set dislike_activate = '' %}
-                {% set done = false %}
-                
-                {% for blg in likes %}
-                    {% if not done and blogs_list[blog].id == blg.blog_id %}
-                        {% if blg.like == 1 %}
-                            {% set like_activate = 'activate' %}
-                            {% set done = true %}
-                        {% elif blg.like == 0 %}
-                            {% set dislike_activate = 'activate' %}
-                            {% set done = true %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                <div class="toggle-container">
-                    <form method="post" action="{{url_for('blogs.like', blog_id=blogs_list[blog].id)}}">
-                        <button id="likeBtn" class="toggle-btn like {{like_activate}}">
-                        👍</button>
-                        {{blogs_list[blog].like}} 
-                    </form>
+        <a href="{{ url_for('blogs.other_profile', users_id=blog.user_id) }}">
+          {{ users_name[loop.index0] }}
+        </a>
+        <h4 class="card-title">{{ blog.title }}</h4>
+        <h6 class="text-muted">{{ blog.date }}</h6>
+        <p class="card-text">{{ blogs[loop.index0] }}</p>
 
-                    <form method="post" action="{{url_for('blogs.dislike', blog_id=blogs_list[blog].id)}}">
-                        <button id="dislikeBtn" class="toggle-btn dislike {{dislike_activate}}">
-                        👎</button>
-                        {{blogs_list[blog].dislike}} 
-                    </form>
-                </div>
-            </div>
+        <div class="toggle-container">
+          <form method="post" action="{{ url_for('blogs.like', blog_id=blog.id) }}">
+            <button type="submit" class="toggle-btn like">👍</button>
+            {{ blog.likes }}
+          </form>
+          <form method="post" action="{{ url_for('blogs.dislike', blog_id=blog.id) }}">
+            <button type="submit" class="toggle-btn dislike">👎</button>
+            {{ blog.dislikes }}
+          </form>
         </div>
-    {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+  <script>
+    const likesData = {{ likes_json | tojson }};
+
+    document.querySelectorAll('.card').forEach(card => {
+        const blogId = card.querySelector('.blog-id').value;
+        const likeBtn = card.querySelector('.toggle-btn.like');
+        const dislikeBtn = card.querySelector('.toggle-btn.dislike');
+
+        likesData.forEach(entry => {
+            if (entry.blog_id == blogId) {
+                if (entry.likes) {
+                    likeBtn.classList.add('activate');
+                } else {
+                    dislikeBtn.classList.add('activate');
+                }
+            }
+         });
+    });
+  </script>
 </div>
-<script src="/js/like.js"></script> 
 {% endblock %}
