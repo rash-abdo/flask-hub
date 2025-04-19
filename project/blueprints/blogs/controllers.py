@@ -1,11 +1,12 @@
 from flask import (render_template,request,
                    redirect,url_for,flash,session)
 from project.app import db
-from project.blueprints.blogs.models import Blogs,Likes
+from project.blueprints.blogs.models import Blogs,Likes,Comments
 from project.blueprints.profiles.models import Users,Info
 import os
 import datetime
 import uuid
+from sqlalchemy.exc import DataError
 
 
 #view my blogs
@@ -29,11 +30,11 @@ def view_myblogs():
 
 #create blog
 def create_blog():
-    
     title = request.form.get('title')
     blog = request.form.get('blog')
     path = f'project/uploads/blogs/Uid_{session["uid"]}'
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
     file_name = uuid.uuid4().hex[:15]
     file = os.path.join(path,f'{file_name}.txt')
 
@@ -83,28 +84,28 @@ def edit_blog(blog_id):
     
 #view home page
 def home():
-    if request.method == 'GET':
-        user_id=session.get('uid')
-        blogs_list=Blogs.query.all()
-        number_blogs = len(blogs_list)
-        blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
+    user_id=session.get('uid')
+    blogs_list=Blogs.query.all()
+    number_blogs = len(blogs_list)
+    blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
 
-        users_name=[]
-        for blog in blogs_list:
-            users_name.append(Users.query.get(blog.user_id).name)
-        
-        blogs=[]
-        for blog in blogs_list:
-            with open(blog.path,'r') as f:
-                blogs.append(f.read())
-        
-        if user_id:
-            likes = Likes.query.filter_by(user_id=user_id).all()
+    users_name=[]
+    for blog in blogs_list:
+        users_name.append(Users.query.get(blog.user_id).name)
+    
+    blogs_contents=[]
+    for blog in blogs_list:
+        with open(blog.path,'r') as f:
+            blogs_contents.append(f.read())
+    
+    likes=[]
+    if user_id:
+        likes = Likes.query.filter_by(user_id=user_id).all()
 
-        return render_template('home.html',blogs_list=blogs_list,
-                               blogs=blogs,number_blogs=number_blogs,
-                               users_name=users_name,
-                               likes_json=[like.to_dict() for like in likes])
+    return render_template('home.html',blogs_list=blogs_list,
+                           blogs_contents=blogs_contents,number_blogs=number_blogs,
+                           users_name=users_name,
+                           likes_json=[like.to_dict() for like in likes])
 
 #view other profiles
 def other_profile(users_id):
@@ -121,68 +122,118 @@ def other_profile(users_id):
     number_blogs = len(blogs_list)
     blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
     
-    blogs=[]
+    blogs_contents=[]
     for blog in blogs_list:
         with open(blog.path,'r') as f:
-            blogs.append(f.read())
+            blogs_contents.append(f.read())
     
     if user_id:
         likes = Likes.query.filter_by(user_id=user_id).all()
 
     return render_template('other_profile.html',blogs_list=blogs_list,
-                           blogs=blogs,number_blogs=number_blogs,
+                           blogs_contents=blogs_contents,number_blogs=number_blogs,
                         email=email,name=name,color=color,music=music,
                         likes_json=[like.to_dict() for like in likes])
 
 #like function
 def like(blog_id):
-    if request.method == 'POST':
-        user_id = session.get('uid')
-        if user_id:
-            like = Likes.query.filter_by(blog_id=blog_id,user_id=user_id).first()
-            blog = Blogs.query.get(blog_id)
-            if not like:
-                like = Likes(blog_id=blog_id, user_id=user_id, likes=1)
-                blog.likes+=1
-                db.session.add(like)
+    user_id = session.get('uid')
+    if user_id:
+        like = Likes.query.filter_by(blog_id=blog_id,user_id=user_id).first()
+        blog = Blogs.query.get(blog_id)
+        if not like:
+            like = Likes(blog_id=blog_id, user_id=user_id, likes=1)
+            blog.likes+=1
+            db.session.add(like)
+            db.session.commit()
+        else:
+            if like.likes:
+                blog.likes-=1
+                db.session.delete(like)
                 db.session.commit()
             else:
-                if like.likes:
-                    blog.likes-=1
-                    db.session.delete(like)
-                    db.session.commit()
-                else:
-                    blog.likes+=1
-                    blog.dislikes+=1
-                    like.likes = 1
-                    db.session.commit()
-            return redirect(request.referrer)
-        else:
-            return redirect(url_for('profile.logout'))
+                blog.likes+=1
+                blog.dislikes+=1
+                like.likes = 1
+                db.session.commit()
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('profile.logout'))
 #dislike function
 def dislike(blog_id):
-    if request.method == 'POST':
-        user_id = session.get('uid')
-        if user_id:
-            like = Likes.query.filter_by(blog_id=blog_id,user_id=user_id).first()
-            blog = Blogs.query.get(blog_id)
-            if not like:
-                like = Likes(blog_id=blog_id, user_id=user_id, likes=0)
+    user_id = session.get('uid')
+    if user_id:
+        like = Likes.query.filter_by(blog_id=blog_id,user_id=user_id).first()
+        blog = Blogs.query.get(blog_id)
+        if not like:
+            like = Likes(blog_id=blog_id, user_id=user_id, likes=0)
+            blog.dislikes-=1
+            db.session.add(like)
+            db.session.commit()
+        else:
+            if like.likes:
+                blog.likes-=1
                 blog.dislikes-=1
-                db.session.add(like)
+                like.likes = 0
                 db.session.commit()
             else:
-                if like.likes:
-                    blog.likes-=1
-                    blog.dislikes-=1
-                    like.likes = 0
-                    db.session.commit()
-                else:
-                    blog.dislikes+=1
-                    db.session.delete(like)
-                    db.session.commit()
+                blog.dislikes+=1
+                db.session.delete(like)
+                db.session.commit()
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('profile.logout'))
+
+#add comment function
+def comment(blog_id):
+    user_id = session.get('uid')
+    if user_id:
+        try:
+            blog = Blogs.query.get(blog_id)
+            
+            content = request.form.get('comment')
+            comment = Comments(blog_id=blog_id,user_id=user_id,comment=content)
+            blog.comments+=1
+            db.session.add(comment)
+            db.session.commit()
             return redirect(request.referrer)
-        else:
-            return redirect(url_for('profile.logout'))
+        except DataError:
+            flash("Your comment is too long", "warning")
+            db.session.rollback()
+            return redirect(request.referrer)
+    else:
+        return redirect(url_for('profile.logout'))
+
+#view comments function
+def view_comments(blog_id):
+    user_id = session.get('uid')
+    blog = Blogs.query.get(blog_id)
+    user_name = Users.query.get(blog.user_id).name
+
+    with open(blog.path,'r') as f:
+        blog_content = f.read()
 
 
+    likes=[]
+    if user_id:
+        likes = Likes.query.filter_by(user_id=user_id).all()
+    
+    comments = Comments.query.filter_by(blog_id=blog_id)
+    users_names=[]
+    for comment in comments:
+        name = Users.query.get(comment.user_id).name
+        users_names.append(name)
+    
+    return render_template('comments.html',users_names=users_names,
+                           blog_content=blog_content,comments=comments,
+                           user_name=user_name,blog=blog,user_id=user_id,
+                           likes_json = [like.to_dict() for like in likes])
+
+#delete comment function
+def delete_comment(comment_id):
+    comment = Comments.query.get(comment_id)
+    blog = Blogs.query.get(comment.blog_id)
+    db.session.delete(comment)
+    blog.comments-=1
+    db.session.commit()
+    return redirect(request.referrer)

@@ -9,6 +9,7 @@ class Blogs(db.Model):
     title = db.Column(db.String(100),nullable=False)
     likes = db.Column(db.Integer, default=0)
     dislikes = db.Column(db.Integer, default=0)
+    comments = db.Column(db.Integer, default=0)
 
 class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)

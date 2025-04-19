@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block content %}
+<script>const likesData = {{ likes_json | tojson }};</script>
+
 <div class="container py-4">
     <!-- Profile Info -->
   <div class="text-center mb-4">
@@ -26,40 +28,26 @@
           <input type="hidden" class="blog-id" value="{{ blog.id }}">
           <h4 class="card-title">{{ blog.title }}</h4>
           <h6 class="text-muted">{{ blog.date }}</h6>
-          <p class="card-text">{{ blogs[loop.index0] }}</p>
+          <p class="card-text">{{ blogs_contents[loop.index0] }}</p>
   
-          <div class="toggle-container">
+        <div class="toggle-container">
             <form method="post" action="{{ url_for('blogs.like', blog_id=blog.id) }}">
               <button type="submit" class="toggle-btn like">👍</button>
               {{ blog.likes }}
-            </form>
-            <form method="post" action="{{ url_for('blogs.dislike', blog_id=blog.id) }}">
+          </form>
+          <form method="post" action="{{ url_for('blogs.dislike', blog_id=blog.id) }}">
               <button type="submit" class="toggle-btn dislike">👎</button>
               {{ blog.dislikes }}
-            </form>
-          </div>
+          </form>
+          <form method="get" action="{{ url_for('blogs.view_comments', blog_id=blog.id) }}">
+            <button type="submit" class="toggle-btn dislike">💬</button>
+            {{ blog.comments }}  
+          </form>
         </div>
       </div>
     {% endfor %}
-  <script>
-    const likesData = {{ likes_json | tojson }};
-
-    document.querySelectorAll('.card').forEach(card => {
-        const blogId = card.querySelector('.blog-id').value;
-        const likeBtn = card.querySelector('.toggle-btn.like');
-        const dislikeBtn = card.querySelector('.toggle-btn.dislike');
-
-        likesData.forEach(entry => {
-            if (entry.blog_id == blogId) {
-                if (entry.likes) {
-                    likeBtn.classList.add('activate');
-                } else {
-                    dislikeBtn.classList.add('activate');
-                }
-            }
-         });
-    });
-  </script>
+  </div>
 </div>
 
+<script src="/js/like.js"></script>
 {% endblock %}
