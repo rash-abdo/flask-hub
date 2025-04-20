@@ -17,7 +17,6 @@ def view_myblogs():
         return redirect(url_for('profile.logout'))
     
     blogs_list = Blogs.query.filter_by(user_id=user_id).all()
-    number_blogs = len(blogs_list)
     blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
 
     blogs=[]
@@ -26,14 +25,14 @@ def view_myblogs():
             blogs.append(f.read())
             
     return render_template('myblogs.html',blogs_list=blogs_list,
-                           blogs=blogs,number_blogs=number_blogs)
+                           blogs=blogs)
 
 #create blog
 def create_blog():
     title = request.form.get('title')
     blog = request.form.get('blog')
-    path = f'project/uploads/blogs/Uid_{session["uid"]}'
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    path = f'project/uploads/blogs/Uid_{session["uid"]}'
 
     file_name = uuid.uuid4().hex[:15]
     file = os.path.join(path,f'{file_name}.txt')
@@ -86,7 +85,6 @@ def edit_blog(blog_id):
 def home():
     user_id=session.get('uid')
     blogs_list=Blogs.query.all()
-    number_blogs = len(blogs_list)
     blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
 
     users_name=[]
@@ -103,7 +101,7 @@ def home():
         likes = Likes.query.filter_by(user_id=user_id).all()
 
     return render_template('home.html',blogs_list=blogs_list,
-                           blogs_contents=blogs_contents,number_blogs=number_blogs,
+                           blogs_contents=blogs_contents,
                            users_name=users_name,
                            likes_json=[like.to_dict() for like in likes])
 
@@ -119,7 +117,6 @@ def other_profile(users_id):
     music = info.music
 
     blogs_list = Blogs.query.filter_by(user_id=users_id).all()
-    number_blogs = len(blogs_list)
     blogs_list = sorted(blogs_list,key=lambda x: x.date,reverse=True)
     
     blogs_contents=[]
@@ -131,7 +128,7 @@ def other_profile(users_id):
         likes = Likes.query.filter_by(user_id=user_id).all()
 
     return render_template('other_profile.html',blogs_list=blogs_list,
-                           blogs_contents=blogs_contents,number_blogs=number_blogs,
+                           blogs_contents=blogs_contents,
                         email=email,name=name,color=color,music=music,
                         likes_json=[like.to_dict() for like in likes])
 
@@ -194,6 +191,7 @@ def comment(blog_id):
             content = request.form.get('comment')
             comment = Comments(blog_id=blog_id,user_id=user_id,comment=content)
             blog.comments+=1
+            
             db.session.add(comment)
             db.session.commit()
             return redirect(request.referrer)
