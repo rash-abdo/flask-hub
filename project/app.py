@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from dotenv import load_dotenv,dotenv_values
+from dotenv import load_dotenv
 import os
 
 
@@ -14,6 +14,7 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
     app.config['UPLOAD_FOLDER'] = 'project/uploads'
+    app.config['UPLOAD_IMAGE_FOLDER'] = 'project/blueprints/blogs/static'
     
     if not os.path.exists('project/uploads'):
         os.makedirs('project/uploads')

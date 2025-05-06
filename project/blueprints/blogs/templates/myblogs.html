@@ -14,7 +14,7 @@
     <!-- Create Blog Section -->
     <div class="card shadow-sm p-4 mb-4">
         <h2 class="mb-3">Create a Blog</h2>
-        <form method="post" action="{{ url_for('blogs.create_blog') }}">
+        <form method="post" action="{{ url_for('blogs.create_blog') }}" enctype="multipart/form-data">
             
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -25,7 +25,11 @@
                 <label for="blog" class="form-label">Content</label>
                 <textarea class="form-control" id="blog" name="blog" rows="5" placeholder="What's on your mind?" required></textarea>
             </div>
-            
+
+            <!--images upload section-->
+            <label>choose image to upload:</label><br>
+            <input type="file" name="image" accept="image/*" />
+
             <button type="submit" class="btn btn-primary">Post</button>
         </form>
     </div>
@@ -39,7 +43,11 @@
                 <h4 class="card-title">{{ blog.title }}</h4>
                 <h6 class="text-muted">{{ blog.date }}</h6>
                 <p class="card-text">{{ blogs[loop.index0] }}</p>
-                
+
+                {% if blog.image %}
+                    <img src='{{blog.image}}' />
+                {% endif %}
+
                 <div class="d-flex justify-content-end">
                     <!-- Delete Button -->
                     <form method="post" action="{{ url_for('blogs.delete_blog', blog_id=blog.id) }}" class="me-2">

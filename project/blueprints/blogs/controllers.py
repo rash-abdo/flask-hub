@@ -1,4 +1,4 @@
-from flask import (render_template,request,
+from flask import (render_template,request,send_from_directory,
                    redirect,url_for,flash,session)
 from project.app import db
 from project.blueprints.blogs.models import Blogs,Likes,Comments
@@ -6,6 +6,7 @@ from project.blueprints.profiles.models import Users,Info
 import os
 import datetime
 import uuid
+from werkzeug.utils import secure_filename
 from sqlalchemy.exc import DataError
 
 
@@ -27,6 +28,7 @@ def view_myblogs():
     return render_template('myblogs.html',blogs_list=blogs_list,
                            blogs=blogs)
 
+
 #create blog
 def create_blog():
     title = request.form.get('title')
@@ -41,9 +43,22 @@ def create_blog():
         os.makedirs(path)
     with open(file,"w") as f:
         f.write(blog)
+    
+    image_path = None
+    image = request.files.get('image')
+    if image:
+        path = f'project/uploads/images/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        ext = os.path.splitext(image.filename)[1].lower()
+        image_filename = secure_filename(uuid.uuid4().hex + ext)
 
+        image_path = os.path.join(path, image_filename)
+        image.save(image_path)
+        image_path = os.path.abspath(image_path)
+        
     blog = Blogs(date=time,path=file,
-            user_id=session['uid'],title=title)
+            user_id=session['uid'],title=title,image=image_path)
     db.session.add(blog)
     db.session.commit()
     
