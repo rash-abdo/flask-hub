@@ -22,7 +22,9 @@
   <h1>{{ blog.title }}</h1>
   <h5 class="text-muted">{{ blog.date }}</h5>
   <p>{{ blog_content }}</p>
-
+  {% if blog.image %}
+    <img src="{{ url_for('blogs.view_image', path=blog.image) }}"  width="450" height="300"/>
+  {% endif %}
   <!-- Like / Dislike -->
   <div class="toggle-container" data-blog-id="{{ blog.id }}">
     <form method="post" action="{{ url_for('blogs.like', blog_id=blog.id) }}">

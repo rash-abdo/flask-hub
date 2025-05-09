@@ -10,6 +10,7 @@ class Blogs(db.Model):
     likes = db.Column(db.Integer, default=0)
     dislikes = db.Column(db.Integer, default=0)
     comments = db.Column(db.Integer, default=0)
+    image = db.Column(db.String(300), default=None)
 
 class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)

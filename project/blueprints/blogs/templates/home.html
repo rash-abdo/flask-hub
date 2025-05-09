@@ -19,7 +19,9 @@
         <h4 class="card-title">{{ blog.title }}</h4>
         <h6 class="text-muted">{{ blog.date }}</h6>
         <p class="card-text">{{ blogs_contents[loop.index0] }}</p>
-
+        {% if blog.image %}
+          <img src="{{ url_for('blogs.view_image', path=blog.image) }}"  width="450" height="300"/>
+        {% endif %}
         <div class="toggle-container">
           <form method="post" action="{{ url_for('blogs.like', blog_id=blog.id) }}">
             <button type="submit" class="toggle-btn like">👍</button>
