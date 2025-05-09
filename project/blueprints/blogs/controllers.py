@@ -1,5 +1,5 @@
 from flask import (render_template,request,send_from_directory,current_app,
-                   redirect,url_for,flash,session)
+                   redirect,url_for,flash,session,send_file)
 from project.app import db
 from project.blueprints.blogs.models import Blogs,Likes,Comments
 from project.blueprints.profiles.models import Users,Info
@@ -28,9 +28,13 @@ def view_myblogs():
     return render_template('myblogs.html',blogs_list=blogs_list,
                            blogs=blogs)
 
+#view image
+def view_image(path):
+    return send_file(path)
 
 #create blog
 def create_blog():
+    
     title = request.form.get('title')
     blog = request.form.get('blog')
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -68,6 +72,7 @@ def create_blog():
 def delete_blog(blog_id):
     blog = Blogs.query.get(blog_id)
     os.remove(blog.path)
+    os.remove(blog.image)
     db.session.delete(blog)
     db.session.commit()
 
@@ -81,8 +86,8 @@ def edit_blog(blog_id):
         with open(blog.path,'r') as f:
             content=f.read()
         
-        return render_template('edit_blog.html',title=title,
-                               content=content,blog_id=blog_id)
+        return render_template('edit_blog.html',blog=blog,
+                               content=content)
     if request.method=='POST':
         new_title = request.form.get('title')
         new_blog = request.form.get('blog')
