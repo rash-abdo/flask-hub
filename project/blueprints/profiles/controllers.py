@@ -1,5 +1,5 @@
 from project.app import db,bcrypt
-from flask import (redirect,render_template,
+from flask import (redirect,render_template,current_app,
                    request,session,flash,url_for)
 from project.blueprints.profiles.models import Users,Info
 import os
@@ -38,7 +38,7 @@ def logout():
 #delete profile function
 def delete():
     user = Users.query.get(session['uid'])
-    blog_path = 'project/uploads/blogs/Uid_'+str(session['uid'])
+    blog_path = f'{current_app.config['UPLOAD_FOLDER']}/Uid_{session['uid']}'
     if os.path.exists(blog_path):
         shutil.rmtree(blog_path)
     db.session.delete(user)

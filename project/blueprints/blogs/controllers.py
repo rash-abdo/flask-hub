@@ -1,4 +1,4 @@
-from flask import (render_template,request,send_from_directory,
+from flask import (render_template,request,send_from_directory,current_app,
                    redirect,url_for,flash,session)
 from project.app import db
 from project.blueprints.blogs.models import Blogs,Likes,Comments
@@ -34,7 +34,7 @@ def create_blog():
     title = request.form.get('title')
     blog = request.form.get('blog')
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    path = f'project/uploads/blogs/Uid_{session["uid"]}'
+    path = f'{current_app.config['UPLOAD_FOLDER']}/blogs/Uid_{session["uid"]}'
 
     file_name = uuid.uuid4().hex[:15]
     file = os.path.join(path,f'{file_name}.txt')
@@ -47,7 +47,7 @@ def create_blog():
     image_path = None
     image = request.files.get('image')
     if image:
-        path = f'project/uploads/images/'
+        path = current_app.config['UPLOAD_IMAGE_FOLDER']
         if not os.path.exists(path):
             os.makedirs(path)
         ext = os.path.splitext(image.filename)[1].lower()
